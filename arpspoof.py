@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 import sys
 import argparse
 import threading
@@ -62,7 +62,7 @@ def start_poison_thread(targets, gateway, control_queue, attacker_MAC):
         except Empty:
             # The Empty exception is thrown when there is no element in the
             # queue. Something clearly is not working as it should...
-            print 'Something broke, your queue idea sucks.'
+            print ('Something broke, your queue idea sucks.')
 
         cmd = item[CMD].lower()
         if cmd in ['quit', 'exit', 'stop', 'leave']:
@@ -80,27 +80,27 @@ def start_poison_thread(targets, gateway, control_queue, attacker_MAC):
                 print "%s not in target list" % item[TARGET][0]
 
         elif cmd in ['list', 'show', 'status']:
-            print 'Current targets:'
-            print 'Gateway: %s (%s)' % gateway
+            print ('Current targets:'(
+            print ('Gateway: %s (%s)') % gateway
             for t in targets:
-                print "%s (%s)" % t
+                print ("%s (%s)") % t
     # we are done, reset every host
     restore_ARP_caches(targets, gateway)
 
 
 def restore_ARP_caches(targets, gateway, verbose=True):
     # send correct ARP responses to the targets and the gateway
-    print 'Stopping the attack, restoring ARP cache'
+    print ('Stopping the attack, restoring ARP cache')
     for i in xrange(3):
         if verbose:
-            print "ARP %s is at %s" % (gateway[IP], gateway[MAC])
+            print ("ARP %s is at %s") % (gateway[IP], gateway[MAC])
         for t in targets:
             if verbose:
-                print "ARP %s is at %s" % (t[IP], t[MAC])
+                print ("ARP %s is at %s") % (t[IP], t[MAC])
             send_ARP(t[IP], t[MAC], gateway[IP], gateway[MAC])
             send_ARP(gateway[IP], gateway[MAC], t[IP], t[MAC])
         time.sleep(1)
-    print 'Restored ARP caches'
+    print ('Restored ARP caches')
 
 
 def send_ARP(destination_IP, destination_MAC, source_IP, source_MAC):
